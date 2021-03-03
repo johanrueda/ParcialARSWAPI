@@ -1,21 +1,35 @@
 package eci.arsw.covidanalyzer.service;
 
+
 import eci.arsw.covidanalyzer.model.Result;
 import eci.arsw.covidanalyzer.model.ResultType;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+@Service("ICovidAggregateServiceStub")
 public class ICovidAggregateServiceStub implements  ICovidAggregateService{
-    /**
-     * Add a new result into the specified result type storage.
-     *
-     * @param result
-     * @param type
-     * @return
-     */
+    private List<Result> List = new CopyOnWriteArrayList<>();
+
+    public ICovidAggregateServiceStub(){
+        List.add(new Result(UUID.randomUUID(),"Johan","Rueda","j.@gmail.com","2021-03-03T10:65:45Z",true,1.5,ResultType.TRUE_NEGATIVE ));
+    }
+
+
     @Override
-    public boolean aggregateResult(Result result, ResultType type) {
-        return false;
+    public void aggregateResult(Result result, ResultType type) throws Excepcion{
+      try{
+          if(result.getResultType() == type){
+              List.add(result);
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
     }
 
     /**
@@ -25,16 +39,29 @@ public class ICovidAggregateServiceStub implements  ICovidAggregateService{
      * @return
      */
     @Override
-    public boolean getResult(ResultType type) {
-        return false;
+    public List<Result> getResult(ResultType type) {
+        List<Result> test=new CopyOnWriteArrayList<>();
+        for (Result result:List)
+        {
+            if(result.getResultType().equals(type))
+            {
+                test.add(result);
+            }
+        }
+        return test;
     }
 
     /**
      * @param id
      * @param type
+     * @return
      */
     @Override
     public void upsertPersonWithMultipleTests(UUID id, ResultType type) {
-
+        for (Result result:List) {
+            if (result.getId().equals(id)){
+                result.setResultType(type);
+            }
+        }
     }
 }
