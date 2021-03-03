@@ -1,1 +1,1 @@
-web: java -cp target/classes:target/dependency/* eci.arsw.covidanalyzer.CovidAnalyzerAPIApplication
+web: java -Dserver.port=$PORT -jar target/covidAnalyzerApi-1.0-SNAPSHOT.jar
